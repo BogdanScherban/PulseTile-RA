@@ -7,12 +7,10 @@ import {
     DateField
 } from "react-admin";
 
-import Card from "@material-ui/core/Card";
-import CardMedia from "@material-ui/core/CardMedia";
 import { withStyles } from "@material-ui/core/styles";
 
-import VaccinationsBanner from "../../images/banners/vaccinations.jpg";
 import VaccinationsEdit from "./VaccinationsEdit";
+import TableHeader from "../../../core/common/TableHeader";
 
 const listStyles = {
     list: {
@@ -27,36 +25,27 @@ const listStyles = {
  * This component returns block with Vaccinations list
  *
  * @author Bogdan Shcherban <bsc@piogroup.net>
- * @param {shape} props
+ * @param {shape} classes
+ * @param {shape} rest
  * @constructor
  */
-export const Vaccinations = props => {
-    const { classes } = props;
-    return (
-        <div>
-            <Card>
-                <CardMedia
-                    component="img"
-                    height="160"
-                    image={VaccinationsBanner}
-                    title="Vaccinations"
-                />
-            </Card>
-            <div style={{ display: "flex" }}>
-                <List title="Vaccinations" className={classes.list} {...props}>
-                    <Datagrid rowClick="edit">
-                        <TextField source="vaccinationName" />
-                        <DateField source="dateCreated" />
-                        <TextField source="source" />
-                    </Datagrid>
-                </List>
-                <Route
-                    path="/vaccinations/:id"
-                    render={({ match }) => <VaccinationsEdit {...props} id={match.params.id} />}
-                />
-            </div>
+export const Vaccinations = ({ classes, ...rest }) => (
+    <div>
+        <TableHeader resourse="vaccinations" />
+        <div style={{ display: "flex" }}>
+            <List title="Vaccinations" className={classes.list} {...rest}>
+                <Datagrid rowClick="edit">
+                    <TextField source="vaccinationName" />
+                    <DateField source="dateCreated" />
+                    <TextField source="source" />
+                </Datagrid>
+            </List>
+            <Route
+                path="/vaccinations/:id"
+                render={({ match }) => <VaccinationsEdit {...rest} classes={classes} id={match.params.id} />}
+            />
         </div>
-    );
-};
+    </div>
+);
 
 export default withStyles(listStyles)(Vaccinations);

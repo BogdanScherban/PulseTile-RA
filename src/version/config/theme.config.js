@@ -1,5 +1,10 @@
-export const resourseOrder = [
-    'patients',
+/**
+ * Order of menu items for the current theme
+ *
+ * @author Bogdan Shcherban <bsc@piogroup.net>
+ * @return {array}
+ */
+export const resourceOrder = [
     'problems',
     'medications',
     'vaccinations',
@@ -7,3 +12,5 @@ export const resourseOrder = [
     'contacts',
     'top3Things'
 ];
+
+export const themeHasTopBar = true;

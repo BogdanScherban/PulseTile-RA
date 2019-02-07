@@ -1,8 +1,17 @@
+import { get } from "lodash";
 import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK, AUTH_GET_PERMISSIONS } from 'react-admin';
 import { token, domainName } from "../token";
 
-export default (type, params) => {
+const OLD_PATIENT_DELAY = 1000;
+const NEW_PATIENT_DELAY = 5000;
+
+export default async (type, params) => {
+
     if (type === AUTH_LOGIN) {
+
+       console.log('AUTH_LOGIN');
+
+
         const { username, password } = params;
         if (username === "ivor.cox@ripple.foundation" && password === "IvorCox1!") {
             localStorage.setItem('userId', "9999999000");
@@ -39,9 +48,13 @@ export default (type, params) => {
         return Promise.resolve();
     }
     if (type === AUTH_CHECK) {
-        return localStorage.getItem('userId')
-            ? Promise.resolve()
-            : Promise.reject();
+
+        console.log('AUTH_CHECK');
+        console.log('token', token);
+        console.log('userId', localStorage.getItem('userId'));
+
+
+        return (localStorage.getItem('userId') && token) ? Promise.resolve() : Promise.reject();
     }
     return Promise.reject("Wrong login or password");
 };

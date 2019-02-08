@@ -28,15 +28,9 @@ class InitializePage extends Component {
             this.props.getUserInfo();
         }
 
-        console.log('userInfo', userInfo );
-
         if (userInfo) {
-            console.log('---------------------------------------------------------------------------');
-            console.log('userLogin', this.props );
-
             this.props.userLogin({}, '/');
         }
-
     }
 
     render() {
@@ -61,7 +55,9 @@ const mapDispatchToProps = dispatch => {
         getUserInfo() {
             dispatch(userInfoAction.request());
         },
-        userLogin,
+        userLogin(params, url) {
+            dispatch(userLogin(params, url));
+        },
     };
 };
 

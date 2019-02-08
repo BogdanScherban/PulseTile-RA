@@ -9,32 +9,33 @@ export default async (type, params) => {
 
     if (type === AUTH_LOGIN) {
 
-       console.log('AUTH_LOGIN');
+        console.log('AUTH_LOGIN');
 
+        return (localStorage.getItem('userId') && token) ? Promise.resolve() : Promise.reject();
 
-        const { username, password } = params;
-        if (username === "ivor.cox@ripple.foundation" && password === "IvorCox1!") {
-            localStorage.setItem('userId', "9999999000");
-            const url = domainName + '/api/user';
-            let options = {};
-            options.method = "GET";
-            if (!options.headers) {
-                options.headers = new Headers({ Accept: 'application/json' });
-            }
-            options.headers = {
-                Authorization: "Bearer " + token,
-            };
-
-            fetch(url, options)
-                .then(response => response.json())
-                .then(res => {
-                    localStorage.setItem('username', res.given_name + ' ' + res.family_name);
-                    localStorage.setItem('role', res.role);
-                })
-                .catch(e => console.log('Error: ', e));
-
-            return Promise.resolve();
-        }
+        // const { username, password } = params;
+        // if (username === "ivor.cox@ripple.foundation" && password === "IvorCox1!") {
+        //     localStorage.setItem('userId', "9999999000");
+        //     const url = domainName + '/api/user';
+        //     let options = {};
+        //     options.method = "GET";
+        //     if (!options.headers) {
+        //         options.headers = new Headers({ Accept: 'application/json' });
+        //     }
+        //     options.headers = {
+        //         Authorization: "Bearer " + token,
+        //     };
+        //
+        //     fetch(url, options)
+        //         .then(response => response.json())
+        //         .then(res => {
+        //             localStorage.setItem('username', res.given_name + ' ' + res.family_name);
+        //             localStorage.setItem('role', res.role);
+        //         })
+        //         .catch(e => console.log('Error: ', e));
+        //
+        //     return Promise.resolve();
+        // }
     }
     if (type === AUTH_LOGOUT) {
         localStorage.removeItem('token');
@@ -48,12 +49,6 @@ export default async (type, params) => {
         return Promise.resolve();
     }
     if (type === AUTH_CHECK) {
-
-        console.log('AUTH_CHECK');
-        console.log('token', token);
-        console.log('userId', localStorage.getItem('userId'));
-
-
         return (localStorage.getItem('userId') && token) ? Promise.resolve() : Promise.reject();
     }
     return Promise.reject("Wrong login or password");

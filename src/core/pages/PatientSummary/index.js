@@ -1,4 +1,3 @@
-// For common request about patient (for dev.ripple.foundation without 8000)
 import React, { Component } from "react";
 import { get } from "lodash";
 import { connect } from 'react-redux';
@@ -8,11 +7,10 @@ import { withStyles } from "@material-ui/core/styles";
 import DashboardCard from "../../common/DashboardCard";
 import { patientInfoAction } from "../../actions/patientInfoAction";
 import { synopsisData, SHOW_ALL } from "./config";
-import { mergeStyles } from "../../helpers";
 import SettingsDialog from "./SettingsDialog";
-import themeStyles from "../../../version/styles";
+import Breadcrumbs from "../../common/Breadcrumbs";
 
-const coreStyles = {
+const styles = theme => ({
     card: {
         display: "inline-block",
         width: "calc(25% - 20px)",
@@ -22,11 +20,33 @@ const coreStyles = {
         boxSizing: "border-box"
     },
     media: {
-        "background-color": "#2196f3"
-    }
-};
-
-const styles = mergeStyles(coreStyles, get(themeStyles, 'patientSummaryPanel', {}))
+        backgroundColor: theme.patientSummaryPanel.media.backgroundColor,
+    },
+    container: {
+        background: theme.patientSummaryPanel.container.background,
+        backgroundSize: "cover",
+    },
+    topBlock: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100px",
+        backgroundColor: theme.patientSummaryPanel.topBlock.backgroundColor,
+        background: theme.patientSummaryPanel.topBlock.background,
+        backgroundSize: "cover",
+        justifyContent: "center",
+        alignItems: "center",
+        color: "white",
+    },
+    icon: {
+        marginBottom: "10px",
+    },
+    title: {
+        marginBottom: 0,
+    },
+    list: {
+        padding: 0,
+    },
+});
 
 class PatientSummaryInfo extends Component {
 
@@ -36,10 +56,14 @@ class PatientSummaryInfo extends Component {
     }
 
     render() {
-        const { classes, patientInfo, loading, showMode, showHeadings } = this.props;
+        const { classes, patientInfo, loading, showMode, showHeadings, location } = this.props;
+        const breadcrumbsResource = [
+            { url: location.pathname, title: "Patient Summary", isActive: false }
+        ];
         return (
-            <div className={classes.container}>
-                <SettingsDialog />
+            <div className={classes.container} >
+                <Breadcrumbs resource={breadcrumbsResource} />
+                <SettingsDialog className={classes.settingsIcon} />
                 <div>
                     {
                         synopsisData.map((item, key) => {

@@ -1,5 +1,5 @@
 import { get } from "lodash";
-import { topThreeThingsSynopsisAction } from "../actions/synopsisActions";
+import { USER_INFO_ACTION } from "../actions/userInfoAction";
 
 const initialState = {
     data: null,
@@ -7,24 +7,24 @@ const initialState = {
     error: null,
 };
 
-export default (state = initialState, { type, payload }) => {
-    switch (type) {
-        case topThreeThingsSynopsisAction.REQUEST:
+export default (state = initialState, action) => {
+    switch (action.type) {
+        case USER_INFO_ACTION.REQUEST:
             return {
                 ...state,
                 loading: true,
             };
-        case topThreeThingsSynopsisAction.SUCCESS:
+        case USER_INFO_ACTION.SUCCESS:
             return {
                 ...state,
                 loading: false,
-                data: get(payload, "synopsis", []),
+                data: get(action, "data", null),
             };
-        case topThreeThingsSynopsisAction.FAILURE:
+        case USER_INFO_ACTION.FAILURE:
             return {
                 ...state,
                 loading: false,
-                error: payload,
+                error: get(action, "error", null),
             };
         default:
             return state;

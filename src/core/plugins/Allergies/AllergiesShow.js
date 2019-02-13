@@ -1,18 +1,30 @@
 import React from "react";
-import { Show, SimpleShowLayout, TextField, DateField } from "react-admin";
+import { TextField, DateField } from "react-admin";
+import { withStyles } from '@material-ui/core/styles';
 
-const AllergiesShow = props => {
-    return (
-        <Show title="Allergies Details" {...props}>
-            <SimpleShowLayout>
-                <TextField source="cause" />
-                <TextField source="reaction" />
-                <TextField source="author" />
-                <DateField source="dateCreated" />
-                <TextField source="source" />
-            </SimpleShowLayout>
-        </Show>
-    );
+import ShowTemplate from "../../common/ResourseTemplates/ShowTemplate";
+
+const styles = {
+    labelBlock: {
+        '& > div': {
+            marginTop: "0px !important",
+            marginBottom: "0px !important",
+        },
+    },
 };
 
-export default AllergiesShow;
+/**
+ * This component returns block with Allergies details component
+ *
+ * @author Bogdan Shcherban <bsc@piogroup.net>
+ */
+const AllergiesShow = ({ classes, ...rest }) => (
+    <ShowTemplate pageTitle="Allergy" {...rest}>
+        <TextField className={classes.labelBlock} label="Cause" source="cause" />
+        <TextField className={classes.labelBlock} label="Reaction / Description" source="reaction" />
+        <TextField className={classes.labelBlock} label="Author" source="author" />
+        <DateField className={classes.labelBlock} label="Date" source="dateCreated" />
+    </ShowTemplate>
+);
+
+export default withStyles(styles)(AllergiesShow);

@@ -7,6 +7,7 @@ import BackIcon from "@material-ui/icons/KeyboardBackspace";
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import logo from "../../../images/pulsetile-core-logo.png";
 
@@ -48,12 +49,14 @@ class TopPart extends Component {
         const isTopbarMenuOpen = Boolean(anchorEl);
         return (
             <Toolbar className={classes.whitePart}>
-                <IconButton
-                    className={classes.backButton}
-                    onClick={() => history.goBack()}
-                    color="inherit" >
-                    <BackIcon />
-                </IconButton>
+                <Tooltip title="Back">
+                    <IconButton
+                        className={classes.backButton}
+                        onClick={() => history.goBack()}
+                        color="inherit" >
+                        <BackIcon />
+                    </IconButton>
+                </Tooltip>
                 <CardMedia
                     component="img"
                     alt="Pulse Tile"
@@ -62,15 +65,17 @@ class TopPart extends Component {
                     image={logo}
                     title="Pulse Tile"
                 />
-                <div>
-                    <IconButton
-                        className={classes.userNemuButton}
-                        aria-owns={isTopbarMenuOpen ? 'menu-appbar' : undefined}
-                        aria-haspopup="true"
-                        onClick={this.handleMenu}
-                        color="inherit" >
-                        <AccountCircle />
-                    </IconButton>
+                <React.Fragment>
+                    <Tooltip title="User panel">
+                        <IconButton
+                            className={classes.userNemuButton}
+                            aria-owns={isTopbarMenuOpen ? 'menu-appbar' : undefined}
+                            aria-haspopup="true"
+                            onClick={this.handleMenu}
+                            color="inherit" >
+                            <AccountCircle />
+                        </IconButton>
+                    </Tooltip>
                     <Menu
                         id="menu-appbar"
                         anchorEl={anchorEl}
@@ -80,7 +85,7 @@ class TopPart extends Component {
                         onClose={this.handleClose} >
                         {logout}
                     </Menu>
-                </div>
+                </React.Fragment>
             </Toolbar>
         );
     }

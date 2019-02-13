@@ -1,4 +1,3 @@
-import { stringify } from "query-string";
 import { get } from "lodash";
 import moment from "moment";
 import {
@@ -14,9 +13,9 @@ import {
     DELETE_MANY
 } from "react-admin";
 
-import { token } from '../token';
+import pluginFilters from "../config/pluginFilters";
+import { token, domainName } from "../token";
 
-const domainName = "http://dev.ripple.foundation";
 const apiPatientsUser = 'api/patients';
 const currentUserID = localStorage.getItem('userId');
 
@@ -57,6 +56,7 @@ export default () => {
                 }
                 options.headers = {
                     Authorization: "Bearer " + token,
+                    'X-Requested-With': "XMLHttpRequest",
                 };
                 break;
             }
@@ -69,6 +69,7 @@ export default () => {
                 }
                 options.headers = {
                     Authorization: "Bearer " + token,
+                    'X-Requested-With': "XMLHttpRequest",
                 };
                 break;
 
@@ -81,7 +82,8 @@ export default () => {
                 }
                 options.headers = {
                     Authorization: "Bearer " + token,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': "XMLHttpRequest",
                 };
                 options.body = JSON.stringify(data);
                 break;
@@ -95,23 +97,11 @@ export default () => {
                 }
                 options.headers = {
                     Authorization: "Bearer " + token,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': "XMLHttpRequest",
                 };
                 options.body = JSON.stringify(params.data);
                 break;
-
-            // case DELETE:
-            //     url = `${apiUrl}/${resource}/${params.id}`;
-            //     options.method = "DELETE";
-            //     break;
-
-            // case GET_MANY: {
-            //     const query = {
-            //         [`id_like`]: params.ids.join("|")
-            //     };
-            //     url = `${apiUrl}/${resource}?${stringify(query)}`;
-            //     break;
-            // }
 
             default:
                 throw new Error(`Unsupported fetch action type ${type}`);
@@ -166,6 +156,62 @@ export default () => {
     }
 
     /**
+     * This function extracts results from response
+     *
+     * @author Bogdan Shcherban <bsc@piogroup.net>
+     * @param {string} resource
+     * @param {shape}  response
+     * @param {shape}  params
+     * @return {array}
+     */
+    function getResultsFromResponse(resource, response, params) {
+        let results = [];
+        if (resource !== 'patients') {
+            results = response.map((item, id) => {
+                return Object.assign({id: item.sourceId}, item);
+            });
+        } else {
+            results = getPatientsList(response, params);
+        }
+        return results;
+    }
+
+    /**
+     * This function cheks is current item consider to filter condition
+     *
+     * @author Bogdan Shcherban <bsc@piogroup.net>
+     * @param {shape}  item
+     * @param {shape}  filters
+     * @param {string} filterText
+     * @return {boolean}
+     */
+    function isItemConsider(item, filters, filterText) {
+        let result = false;
+        filters.forEach(filterItem => {
+            let string = item[filterItem];
+            if (String(string).toLowerCase().search(filterText) >= 0) {
+                result = true;
+            }
+        });
+        return result;
+    }
+
+    /**
+     * This function filters response array
+     *
+     * @author Bogdan Shcherban <bsc@piogroup.net>
+     * @param {string} resource
+     * @param {array}  results
+     * @param {shape}  params
+     * @return {array}
+     */
+    function getFilterResults(resource, results, params) {
+        const filterText = params.filter.filterText;
+        const filters = pluginFilters[resource];
+        return !filterText ? results : results.filter(item => isItemConsider(item, filters, filterText));
+    }
+
+    /**
      * This constant handle response data
      *
      * @author Bogdan Shcherban <bsc@piogroup.net>
@@ -182,21 +228,15 @@ export default () => {
                 const pageNumber = get(params, 'pagination.page', 1);
                 const numberPerPage = get(params, 'pagination.perPage', 10);
 
-                let results = [];
-                if ('patients' !== resource) {
-                    results = response.map((item, id) => {
-                        return Object.assign({id: item.sourceId}, item);
-                    });
-                } else {
-                    results = getPatientsList(response, params);
-                }
+                const results = getResultsFromResponse(resource, response, params);
+                const resultsFiltering = getFilterResults(resource, results, params);
 
                 const startItem = (pageNumber - 1) * numberPerPage;
                 const endItem = pageNumber * numberPerPage;
-                const paginationResults = results.slice(startItem, endItem);
+                const paginationResults = resultsFiltering.slice(startItem, endItem);
                 return {
                     data: paginationResults,
-                    total: results.length,
+                    total: resultsFiltering.length,
                 };
 
             case GET_ONE:

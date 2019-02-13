@@ -1,25 +1,11 @@
 import React from "react";
 import { Route } from "react-router";
-import {
-    List,
-    Datagrid,
-    DateField,
-    TextField
-} from "react-admin";
+import { DateField, TextField } from "react-admin";
 
-import { withStyles } from "@material-ui/core/styles";
-
-import TableHeader from "../../common/TableHeader";
+import ListTemplate from "../../common/ResourseTemplates/ListTemplate";
+import MedicationsCreate from "./MedicationsCreate";
 import MedicationsEdit from "./MedicationsEdit";
-
-const listStyles = {
-    list: {
-        width: '100%',
-    },
-    edit: {
-        width: '100%',
-    },
-};
+import MedicationsShow from "./MedicationsShow";
 
 /**
  * This component returns block with Medications list
@@ -29,24 +15,19 @@ const listStyles = {
  * @param {shape} rest
  * @constructor
  */
-export const Medications = ({ classes, ...rest }) => (
-    <div>
-        <TableHeader resource="medications" />
-        <div style={{ display: "flex" }}>
-            <List title="Medications" className={classes.list} {...rest}>
-                <Datagrid rowClick="edit">
-                    <TextField source="name" />
-                    <TextField source="doseAmount" />
-                    <DateField source="dateOfOnset" />
-                    <TextField source="source" />
-                </Datagrid>
-            </List>
-            <Route
-                path="/medications/:id"
-                render={({ match }) => <MedicationsEdit {...rest} classes={classes} id={match.params.id} />}
-            />
-        </div>
-    </div>
+export const MedicationsList = ({ classes, ...rest }) => (
+    <ListTemplate
+      create={MedicationsCreate}
+      edit={MedicationsEdit}
+      show={MedicationsShow}
+      resourceUrl="medications"
+      title="Medications"
+      {...rest}
+    >
+        <TextField source="name" />
+        <TextField source="doseAmount" />
+        <TextField source="source" />
+    </ListTemplate>
 );
 
-export default withStyles(listStyles)(Medications);
+export default MedicationsList;
